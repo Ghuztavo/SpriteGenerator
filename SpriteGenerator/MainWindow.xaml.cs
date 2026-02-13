@@ -17,6 +17,8 @@ namespace SpriteGenerator
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Images collection bound to the ListBox
+        // ObservableCollection allows automatic UI updates when items are added/removed
         System.Collections.ObjectModel.ObservableCollection<string> _images = new System.Collections.ObjectModel.ObservableCollection<string>();
 
         public MainWindow()
@@ -25,6 +27,7 @@ namespace SpriteGenerator
             SpriteListBox.ItemsSource = _images;
         }
 
+        // Browse for output file (directory + filename)
         private void BrowseOutput_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog dialog = new SaveFileDialog();
@@ -48,6 +51,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Add images to the list
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -66,6 +70,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Remove selected image from the list
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             if (SpriteListBox.SelectedItem != null)
@@ -73,9 +78,11 @@ namespace SpriteGenerator
                 _images.Remove((string)SpriteListBox.SelectedItem);
             }
         }
-
+        
+        // Generate the sprite sheet
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
+            // Validate inputs
             if (string.IsNullOrWhiteSpace(OutputFileTextBox.Text) || string.IsNullOrWhiteSpace(FilenameTextBox.Text))
             {
                 MessageBox.Show("Please select an output directory and filename.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -94,6 +101,7 @@ namespace SpriteGenerator
                 return;
             }
 
+            // Generate the sprite sheet using TextureAtlasLib
             try
             {
                 TextureAtlasLib.Spritesheet spritesheet = new TextureAtlasLib.Spritesheet();
@@ -118,11 +126,12 @@ namespace SpriteGenerator
             }
         }
 
-        private string _currentProjectPath = null;
-        private bool _hasUnsavedChanges = false;
+        private string _currentProjectPath = null; // Tracks the currently opened/saved project file path
+        private bool _hasUnsavedChanges = false; // Tracks if there are unsaved changes to prompt the user when needed
 
-        // ... Existing methods ...
+        // -- Menu actions for New, Open, Save, Save As, and Exit --
 
+        // Create a new project
         private void New_Click(object sender, RoutedEventArgs e)
         {
             if (CheckUnsavedChanges())
@@ -135,6 +144,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Open an existing project
         private void Open_Click(object sender, RoutedEventArgs e)
         {
             if (CheckUnsavedChanges())
@@ -149,6 +159,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Save the current project
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(_currentProjectPath))
@@ -157,6 +168,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Save the current project with a new name
         private void SaveAs_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -168,6 +180,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Exit the application
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             if (CheckUnsavedChanges())
@@ -176,12 +189,9 @@ namespace SpriteGenerator
             }
         }
 
+        // Check for unsaved changes and prompt the user to save before continuing
         private bool CheckUnsavedChanges()
         {
-            // Simplified check: always return true unless implemented robust change tracking or data exists
-            // For this assignment, the prompt requirements are specific.
-            // Let's implement a simpler version based on user request: "prompts... if user would like to save first"
-
             if (_images.Count > 0 || !string.IsNullOrEmpty(OutputFileTextBox.Text))
             {
                 MessageBoxResult result = MessageBox.Show("Do you want to save changes to the current project?", "Sprite Generator", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
@@ -212,6 +222,7 @@ namespace SpriteGenerator
             return true;
         }
 
+        // Save the current project to an XML file
         private void SaveProject(string path)
         {
             try
@@ -241,6 +252,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Load a project from an XML file and populate the UI
         private void LoadProject(string path)
         {
             try
@@ -277,6 +289,7 @@ namespace SpriteGenerator
             }
         }
 
+        // Clear the UI and reset all fields to their default state
         private void ClearUI()
         {
             _images.Clear();
